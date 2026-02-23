@@ -8,14 +8,15 @@ import { ArrowLeft } from 'lucide-react';
 export default async function AgentsPage({
   params,
 }: {
-  params: { projectId: string };
+  params: Promise<{ projectId: string }>;
 }) {
+  const { projectId } = await params;
   const supabase = await createServerSupabaseClient();
 
   const { data: team } = await supabase
     .from('teams')
     .select('id')
-    .eq('project_id', params.projectId)
+    .eq('project_id', projectId)
     .single();
 
   if (!team) {
@@ -31,7 +32,7 @@ export default async function AgentsPage({
   return (
     <div className="p-6">
       <div className="flex items-center gap-4 mb-6">
-        <Link href={`/dashboard/${params.projectId}`}>
+        <Link href={`/dashboard/${projectId}`}>
           <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back

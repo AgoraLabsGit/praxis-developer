@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Settings } from 'lucide-react';
 
 export function AgentCard({ agent }: { agent: Agent }) {
   const [configOpen, setConfigOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -32,7 +34,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
         </CardHeader>
         <CardContent className="space-y-2">
           <p className="text-sm text-muted-foreground">
-            {agent.model_provider} / {agent.model_name}
+            {agent.model_provider ?? '—'} / {agent.model_name}
           </p>
           <p className="text-xs text-muted-foreground">
             ${agent.current_month_spend?.toFixed(2) ?? '0.00'} of $
@@ -50,6 +52,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
         agent={agent}
         open={configOpen}
         onOpenChange={setConfigOpen}
+        onSaved={() => router.refresh()}
       />
     </>
   );

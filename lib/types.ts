@@ -17,6 +17,7 @@ export type Agent = {
   type: 'research' | 'builder' | 'review' | 'sync';
   model_provider: string;
   model_name: string;
+  provider_id: string | null;
   system_prompt: string;
   max_cost_per_run: number;
   monthly_budget: number;

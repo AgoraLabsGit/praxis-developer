@@ -1,10 +1,10 @@
 'use server';
 
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { DEFAULT_AGENT_CONFIGS } from '@/lib/agent-prompts';
 
 export async function createOrganizationForUser(userId: string) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createAdminClient();
 
   const { data: org, error: orgError } = await supabase
     .from('organizations')
@@ -13,7 +13,9 @@ export async function createOrganizationForUser(userId: string) {
     .single();
 
   if (orgError || !org) {
-    throw new Error('Failed to create organization');
+    throw new Error(
+      orgError ? `Failed to create organization: ${orgError.message}` : 'Failed to create organization'
+    );
   }
 
   const { data: project, error: projectError } = await supabase
@@ -27,7 +29,9 @@ export async function createOrganizationForUser(userId: string) {
     .single();
 
   if (projectError || !project) {
-    throw new Error('Failed to create project');
+    throw new Error(
+      projectError ? `Failed to create project: ${projectError.message}` : 'Failed to create project'
+    );
   }
 
   const { data: team, error: teamError } = await supabase
@@ -37,7 +41,9 @@ export async function createOrganizationForUser(userId: string) {
     .single();
 
   if (teamError || !team) {
-    throw new Error('Failed to create team');
+    throw new Error(
+      teamError ? `Failed to create team: ${teamError.message}` : 'Failed to create team'
+    );
   }
 
   await supabase.from('workflows').insert({
