@@ -34,7 +34,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { ChatSidebar } from '@/components/chat-sidebar';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
@@ -85,15 +84,15 @@ export function DashboardShell({
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="h-14 border-b bg-card flex items-center justify-between px-4 shrink-0">
+      <header className="h-12 border-b bg-background flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-4">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
+            <div className="w-7 h-7 bg-foreground rounded-md flex items-center justify-center">
+              <span className="text-background font-bold text-xs">P</span>
             </div>
-            <span className="font-bold text-lg hidden md:block">
-              Praxis Developer
+            <span className="font-semibold text-sm tracking-tight hidden md:block">
+              Praxis
             </span>
           </Link>
 
@@ -171,8 +170,8 @@ export function DashboardShell({
         {/* Left Sidebar */}
         <aside
           className={cn(
-            "border-r bg-card transition-all duration-300 shrink-0",
-            sidebarCollapsed ? "w-16" : "w-64"
+            "border-r bg-background transition-all duration-300 shrink-0",
+            sidebarCollapsed ? "w-16" : "w-60"
           )}
         >
           <div className="flex flex-col h-full">
@@ -268,18 +267,15 @@ export function DashboardShell({
         {!chatCollapsed && (
           <aside
             className={cn(
-              "border-l bg-card transition-all duration-300 shrink-0 flex flex-col",
+              "border-l bg-background transition-all duration-300 shrink-0 flex flex-col",
               chatExpanded ? "w-[600px]" : "w-96"
             )}
           >
             {/* Chat Header */}
             <div className="h-12 flex items-center justify-between px-4 border-b">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-primary" />
+                <MessageSquare className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm font-medium">AI Agents</span>
-                <Badge variant="secondary" className="text-xs">
-                  GMAD
-                </Badge>
               </div>
               <div className="flex items-center gap-1">
                 <Button
@@ -310,7 +306,7 @@ export function DashboardShell({
 
         {/* Collapsed Chat Toggle */}
         {chatCollapsed && (
-          <div className="w-12 border-l bg-card flex items-center justify-center">
+          <div className="w-12 border-l bg-background flex items-center justify-center">
             <Button
               variant="ghost"
               size="icon"
@@ -343,10 +339,10 @@ function NavItem({
     <Link href={href}>
       <div
         className={cn(
-          "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
+          "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
           active
-            ? "bg-primary text-primary-foreground"
-            : "hover:bg-accent text-foreground",
+            ? "bg-accent text-foreground font-medium"
+            : "text-muted-foreground hover:bg-accent hover:text-foreground",
           collapsed && "justify-center"
         )}
       >

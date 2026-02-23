@@ -15,7 +15,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
 
   return (
     <>
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="hover:bg-accent/50 transition-colors">
         <CardHeader className="pb-2 flex flex-row items-start justify-between">
           <div>
             <h3 className="font-semibold">{agent.name}</h3>

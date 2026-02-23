@@ -76,7 +76,7 @@ export default async function WorkflowsPage({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-3">
-            <Workflow className="w-5 h-5 text-primary" />
+            <Workflow className="w-5 h-5 text-foreground" />
             <span className="text-sm font-medium text-muted-foreground">
               Total Runs
             </span>
@@ -98,7 +98,7 @@ export default async function WorkflowsPage({
 
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-3">
-            <DollarSign className="w-5 h-5 text-primary" />
+            <DollarSign className="w-5 h-5 text-foreground" />
             <span className="text-sm font-medium text-muted-foreground">
               Total Cost
             </span>
@@ -108,7 +108,7 @@ export default async function WorkflowsPage({
 
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-3">
-            <Clock className="w-5 h-5 text-primary" />
+            <Clock className="w-5 h-5 text-foreground" />
             <span className="text-sm font-medium text-muted-foreground">
               Avg. Duration
             </span>
@@ -123,8 +123,8 @@ export default async function WorkflowsPage({
       {workflow ? (
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Workflow className="w-6 h-6 text-primary" />
+            <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+              <Workflow className="w-6 h-6 text-foreground" />
             </div>
             <div>
               <h2 className="text-xl font-semibold">{workflow.name}</h2>
@@ -138,8 +138,8 @@ export default async function WorkflowsPage({
             {['Research', 'Generate PRD', 'Implementation', 'Review', 'Sync'].map(
               (step, i) => (
                 <div key={i} className="text-center">
-                  <div className="w-12 h-12 mx-auto rounded-lg bg-primary/10 flex items-center justify-center mb-2">
-                    <span className="font-bold text-primary">{i + 1}</span>
+                  <div className="w-12 h-12 mx-auto rounded-lg bg-muted flex items-center justify-center mb-2">
+                    <span className="font-bold text-foreground">{i + 1}</span>
                   </div>
                   <div className="text-sm font-medium">{step}</div>
                 </div>

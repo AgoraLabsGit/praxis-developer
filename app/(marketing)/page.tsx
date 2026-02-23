@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-b from-muted/50 to-background">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-background">
       <div className="max-w-3xl text-center space-y-8">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-balance">
           Praxis Developer
         </h1>
-        <p className="text-xl text-muted-foreground">
+        <p className="text-lg text-muted-foreground max-w-xl mx-auto text-pretty">
           AI agent platform for shipping features 10x faster. Chat-driven
           development with GMAD agents.
         </p>

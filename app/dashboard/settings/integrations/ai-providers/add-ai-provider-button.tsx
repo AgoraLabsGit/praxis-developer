@@ -119,7 +119,7 @@ export function AddAIProviderButton() {
                 />
                 <span className="font-medium">{p.label}</span>
                 {p.recommended && (
-                  <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">
+                  <span className="text-xs bg-muted text-foreground px-2 py-0.5 rounded-full">
                     Recommended
                   </span>
                 )}

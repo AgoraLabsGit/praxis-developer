@@ -187,8 +187,8 @@ export function ChatSidebar({ projectId: propProjectId }: ChatSidebarProps) {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-6">
-      <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-        <MessageSquare className="w-8 h-8 text-primary" />
+      <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
+        <MessageSquare className="w-8 h-8 text-muted-foreground" />
       </div>
       <h3 className="font-semibold text-lg mb-2">No messages yet</h3>
       <p className="text-sm text-muted-foreground max-w-xs">
@@ -215,8 +215,8 @@ function ChatMessage({ message }: { message: ChatMessageType }) {
       >
         {!isUser && message.sender_name && (
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-xs font-medium text-primary">
+            <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center">
+              <span className="text-xs font-medium text-foreground">
                 {message.sender_name.substring(0, 1)}
               </span>
             </div>
