@@ -86,7 +86,7 @@ export function SupabaseIntegrationCard({
             href="https://supabase.com/dashboard/project/_/settings/api"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline text-sm inline-flex items-center gap-1"
+            className="text-foreground underline underline-offset-4 hover:text-foreground/80 text-sm inline-flex items-center gap-1"
           >
             Get credentials from Supabase Dashboard
             <ExternalLink className="w-3 h-3" />

@@ -15,7 +15,7 @@ export function IntegrationsNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1 p-1 rounded-lg bg-muted/50 w-fit">
+    <nav className="flex gap-1 p-1 rounded-md bg-muted w-fit">
       {TABS.map((tab) => {
         const Icon = tab.icon;
         const isActive =

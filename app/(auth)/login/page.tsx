@@ -89,7 +89,7 @@ function LoginForm() {
           </Button>
           <p className="text-sm text-muted-foreground text-center">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-primary hover:underline">
+            <Link href="/signup" className="text-foreground underline underline-offset-4 hover:text-foreground/80">
               Sign up
             </Link>
           </p>

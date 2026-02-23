@@ -53,7 +53,7 @@ export function AIProvidersList({ providers }: { providers: Provider[] }) {
           <div className="flex items-center gap-3">
             <span className="font-medium capitalize">{p.name}</span>
             {p.is_default && (
-              <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded flex items-center gap-1">
+              <span className="text-xs bg-muted text-foreground px-2 py-0.5 rounded-full flex items-center gap-1">
                 <Star className="w-3 h-3" />
                 Default
               </span>

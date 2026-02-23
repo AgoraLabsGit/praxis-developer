@@ -150,7 +150,7 @@ export function VercelIntegrationCard({
               href="https://vercel.com/account/tokens"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline inline-flex items-center gap-1"
+              className="text-foreground underline underline-offset-4 hover:text-foreground/80 inline-flex items-center gap-1"
             >
               vercel.com/account/tokens
               <ExternalLink className="w-3 h-3" />

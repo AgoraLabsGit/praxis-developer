@@ -48,7 +48,7 @@ export function TimelineView({ projectId }: { projectId: string }) {
               key={day.toISOString()}
               className={`p-2 text-xs text-center border-b ${
                 format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')
-                  ? 'bg-primary/10'
+                  ? 'bg-muted'
                   : ''
               }`}
             >
@@ -82,7 +82,7 @@ export function TimelineView({ projectId }: { projectId: string }) {
                   <div key={i} className="p-1 min-h-[24px]">
                     {dayIndex === i && (
                       <div
-                        className="h-6 rounded bg-primary/20 border border-primary/40"
+                        className="h-6 rounded bg-foreground/10 border border-foreground/20"
                         title={task.title}
                       />
                     )}

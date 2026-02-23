@@ -144,8 +144,8 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <Card className="p-12 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
-              <Plus className="w-8 h-8 text-primary" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-muted mb-4">
+              <Plus className="w-8 h-8 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-semibold mb-2">
               Create your first project
@@ -198,8 +198,8 @@ function StatCard({
   return (
     <Card className="p-6">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-primary" />
+        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+          <Icon className="w-5 h-5 text-foreground" />
         </div>
         <span className="text-sm font-medium text-muted-foreground">
           {label}
@@ -229,7 +229,7 @@ interface ProjectWithAgents {
 function ProjectCard({ project }: { project: ProjectWithAgents }) {
   return (
     <Link href={`/dashboard/${project.id}`}>
-      <Card className="p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group border-2 hover:border-primary/50">
+      <Card className="p-6 hover:bg-accent/50 transition-all duration-200 cursor-pointer group hover:border-foreground/20">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold shadow-sm"
@@ -238,7 +238,7 @@ function ProjectCard({ project }: { project: ProjectWithAgents }) {
             {project.name.substring(0, 2).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
+            <h3 className="font-semibold truncate transition-colors">
               {project.name}
             </h3>
             {project.description && (
@@ -253,7 +253,7 @@ function ProjectCard({ project }: { project: ProjectWithAgents }) {
           <div className="text-sm text-muted-foreground">
             {project.agentCount} agents
           </div>
-          <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+          <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
         </div>
       </Card>
     </Link>
@@ -278,7 +278,7 @@ function WorkflowActivityItem({ run }: { run: WorkflowRun }) {
   const project = run.workflow?.team?.project;
   const statusIcon = {
     completed: <CheckCircle2 className="w-5 h-5 text-success" />,
-    running: <Loader2 className="w-5 h-5 text-primary animate-spin" />,
+    running: <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />,
     failed: <XCircle className="w-5 h-5 text-destructive" />,
   }[run.status] || <Clock className="w-5 h-5 text-muted-foreground" />;
 
