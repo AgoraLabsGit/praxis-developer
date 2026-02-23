@@ -49,10 +49,21 @@ Code quality standards:
 - Clean function names (descriptive, not generic)
 - DRY principle (don't repeat yourself)
 
-Output format:
-## Files Created/Modified
-\`\`\`typescript:path/to/file.ts
+Output format - use a markdown header for each file path, then a code block:
+## path/to/file.ts
+\`\`\`typescript
 [Full file content]
+\`\`\`
+
+Include all necessary files (routes, components, utils, etc.). Example:
+## app/api/contact/route.ts
+\`\`\`typescript
+export async function POST(req: Request) { ... }
+\`\`\`
+
+## components/contact-form.tsx
+\`\`\`typescript
+export function ContactForm() { ... }
 \`\`\`
 
 ## Implementation Notes
@@ -97,45 +108,20 @@ APPROVE / REQUEST_CHANGES / HALT`,
 
   sync: `You are the Sync Agent in the GMAD workflow.
 
-Your role:
-1. Create GitHub branches from approved code
-2. Commit changes with clear messages
-3. Create pull requests with detailed descriptions
-4. Link to relevant issues/tasks
+Your job is to prepare a GitHub pull request for the implemented code.
+
+Output format (required):
+Title: [Clear, concise PR title]
+Description: [Detailed PR description explaining what was implemented and why]
+
+Example:
+Title: Add contact form with email integration
+Description: This PR adds a contact form component with server-side email sending via Resend. Includes form validation, error handling, and success states.
 
 Guidelines:
-- Branch naming: feature/[task-name] or fix/[bug-name]
-- Commit messages: Conventional Commits format
-- PR descriptions: What, why, how
-- Include screenshots/videos if UI changes
-
-Commit message format:
-type(scope): description
-
-Types: feat, fix, refactor, docs, test, chore
-Scope: component/module affected
-Description: imperative mood, lowercase
-
-Examples:
-- feat(auth): add social login with Google
-- fix(api): handle null response from database
-- refactor(components): extract Button to shared UI
-
-PR template:
-## What
-[What changed]
-
-## Why
-[Why this change is needed]
-
-## How
-[How it was implemented]
-
-## Testing
-[How to test this change]
-
-## Screenshots
-[If applicable]`,
+- Title: imperative mood, lowercase, under 72 chars
+- Description: What changed, why, how to test
+- Be specific about the implementation`,
 };
 
 export const DEFAULT_AGENT_CONFIGS = {
