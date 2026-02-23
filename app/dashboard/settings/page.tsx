@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function WorkspaceSettingsPage() {
-  redirect('/dashboard/settings/integrations');
+  redirect('/dashboard/settings/general');
 }

@@ -9,6 +9,7 @@ import {
   Users,
   Workflow,
   Settings,
+  Plug,
   ChevronLeft,
   ChevronRight,
   Moon,
@@ -141,6 +142,12 @@ export function DashboardShell({
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
+                onClick={() => router.push('/dashboard/integrations')}
+              >
+                <Plug className="w-4 h-4 mr-2" />
+                Integrations
+              </DropdownMenuItem>
+              <DropdownMenuItem
                 onClick={() => router.push('/dashboard/settings')}
               >
                 <Settings className="w-4 h-4 mr-2" />
@@ -191,26 +198,19 @@ export function DashboardShell({
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-              <NavItem
-                href="/dashboard"
-                icon={Home}
-                label="Dashboard"
-                collapsed={sidebarCollapsed}
-                active={pathname === '/dashboard'}
-              />
+            <nav className="flex-1 overflow-y-auto p-3 space-y-1 flex flex-col">
+              <div className="space-y-1">
+                <NavItem
+                  href="/dashboard"
+                  icon={Home}
+                  label="Dashboard"
+                  collapsed={sidebarCollapsed}
+                  active={pathname === '/dashboard'}
+                />
 
-              <NavItem
-                href="/dashboard/settings"
-                icon={Settings}
-                label="Settings"
-                collapsed={sidebarCollapsed}
-                active={pathname.startsWith('/dashboard/settings')}
-              />
+                <Separator className="my-3" />
 
-              <Separator className="my-3" />
-
-              {/* Projects Section */}
+                {/* Projects Section */}
               {!sidebarCollapsed && (
                 <div className="px-3 py-2">
                   <div className="flex items-center justify-between mb-2">
@@ -234,6 +234,27 @@ export function DashboardShell({
                   active={pathname.includes(`/dashboard/${project.id}`)}
                 />
               ))}
+              </div>
+
+              <Separator className="my-3" />
+
+              {/* Settings & Integrations (bottom) */}
+              <div className="mt-auto pt-3 space-y-1 border-t">
+                <NavItem
+                  href="/dashboard/settings"
+                  icon={Settings}
+                  label="Settings"
+                  collapsed={sidebarCollapsed}
+                  active={pathname.startsWith('/dashboard/settings')}
+                />
+                <NavItem
+                  href="/dashboard/integrations"
+                  icon={Plug}
+                  label="Integrations"
+                  collapsed={sidebarCollapsed}
+                  active={pathname.startsWith('/dashboard/integrations')}
+                />
+              </div>
             </nav>
           </div>
         </aside>
@@ -429,7 +450,7 @@ function getCurrentProjectId(pathname: string): string | undefined {
   const match = pathname.match(/^\/dashboard\/([^\/]+)/);
   const segment = match?.[1];
   // Exclude non-project routes
-  if (segment && !['new-project', 'settings'].includes(segment)) {
+  if (segment && !['new-project', 'settings', 'integrations'].includes(segment)) {
     return segment;
   }
   return undefined;
@@ -438,13 +459,28 @@ function getCurrentProjectId(pathname: string): string | undefined {
 function getCurrentBreadcrumb(pathname: string, projects: Project[]) {
   // Workspace-level settings (no project context)
   if (pathname === '/dashboard/settings' || pathname.startsWith('/dashboard/settings/')) {
-    let page = 'Integrations';
+    let page = 'General';
     if (pathname.includes('/billing')) page = 'Billing';
     if (pathname.includes('/security')) page = 'Security';
     return (
       <>
         <ChevronRight className="w-4 h-4" />
         <span>Settings</span>
+        <ChevronRight className="w-4 h-4" />
+        <span className="text-foreground">{page}</span>
+      </>
+    );
+  }
+
+  // Workspace-level integrations
+  if (pathname === '/dashboard/integrations' || pathname.startsWith('/dashboard/integrations/')) {
+    let page = 'Code & Repos';
+    if (pathname.includes('/ai-providers')) page = 'AI Providers';
+    if (pathname.includes('/infrastructure')) page = 'Infrastructure';
+    return (
+      <>
+        <ChevronRight className="w-4 h-4" />
+        <span>Integrations</span>
         <ChevronRight className="w-4 h-4" />
         <span className="text-foreground">{page}</span>
       </>

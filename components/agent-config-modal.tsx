@@ -117,7 +117,7 @@ export function AgentConfigModal({
               <p className="text-muted-foreground mb-3">
                 Add an AI provider in Settings → Integrations → AI Providers to configure agents.
               </p>
-              <Link href="/dashboard/settings/integrations/ai-providers">
+              <Link href="/dashboard/integrations/ai-providers">
                 <Button variant="outline" size="sm">
                   Add AI Provider
                 </Button>

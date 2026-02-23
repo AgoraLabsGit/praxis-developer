@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(
-      `${appUrl}/dashboard/settings/integrations?error=config`
+      `${appUrl}/dashboard/integrations/code?error=config`
     );
   }
 
@@ -23,13 +23,13 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     return NextResponse.redirect(
-      `${appUrl}/dashboard/settings/integrations?error=${error}`
+      `${appUrl}/dashboard/integrations/code?error=${error}`
     );
   }
 
   if (!code || !state) {
     return NextResponse.redirect(
-      `${appUrl}/dashboard/settings/integrations?error=missing_params`
+      `${appUrl}/dashboard/integrations/code?error=missing_params`
     );
   }
 
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     orgId = decoded.orgId;
   } catch {
     return NextResponse.redirect(
-      `${appUrl}/dashboard/settings/integrations?error=invalid_state`
+      `${appUrl}/dashboard/integrations/code?error=invalid_state`
     );
   }
 
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
   if (tokenData.error) {
     console.error('GitHub token error:', tokenData);
     return NextResponse.redirect(
-      `${appUrl}/dashboard/settings/integrations?error=token_exchange`
+      `${appUrl}/dashboard/integrations/code?error=token_exchange`
     );
   }
 
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.redirect(
-      `${appUrl}/dashboard/settings/integrations?error=unauthorized`
+      `${appUrl}/dashboard/integrations/code?error=unauthorized`
     );
   }
 
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
 
   if (!org) {
     return NextResponse.redirect(
-      `${appUrl}/dashboard/settings/integrations?error=org_mismatch`
+      `${appUrl}/dashboard/integrations/code?error=org_mismatch`
     );
   }
 
@@ -142,6 +142,6 @@ export async function GET(request: NextRequest) {
   );
 
   return NextResponse.redirect(
-    `${appUrl}/dashboard/settings/integrations?connected=github`
+    `${appUrl}/dashboard/integrations/code?connected=github`
   );
 }

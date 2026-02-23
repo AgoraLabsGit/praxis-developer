@@ -75,7 +75,7 @@ export function RepositorySettingsForm({
         <p className="text-muted-foreground text-sm">
           Connect GitHub in Workspace Settings to select a repository.
         </p>
-        <Link href="/dashboard/settings/integrations">
+        <Link href="/dashboard/integrations/code">
           <Button variant="outline">Connect GitHub</Button>
         </Link>
       </div>

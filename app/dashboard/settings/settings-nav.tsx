@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Plug, CreditCard, Shield } from 'lucide-react';
+import { Settings, CreditCard, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  plug: Plug,
+  settings: Settings,
   'credit-card': CreditCard,
   shield: Shield,
 };

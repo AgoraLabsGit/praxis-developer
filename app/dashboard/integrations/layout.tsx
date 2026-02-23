@@ -1,8 +1,8 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { SettingsNav } from './settings-nav';
+import { IntegrationsNav } from './integrations-nav';
 
-export default async function WorkspaceSettingsLayout({
+export default async function IntegrationsLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -24,25 +24,20 @@ export default async function WorkspaceSettingsLayout({
     redirect('/onboard');
   }
 
-  const navItems = [
-    { href: '/dashboard/settings/general', label: 'General', icon: 'settings' },
-    { href: '/dashboard/settings/billing', label: 'Billing', icon: 'credit-card' },
-    { href: '/dashboard/settings/security', label: 'Security', icon: 'shield' },
-  ];
-
   return (
     <div className="p-6 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">Workspace Settings</h1>
+        <h1 className="text-2xl font-bold">Integrations</h1>
         <p className="text-muted-foreground mt-1">
-          Manage workspace config, billing, and security for {org.name}
+          Connect external services for GMAD workflows
         </p>
       </div>
 
-      <div className="flex gap-8">
-        <SettingsNav items={navItems} />
-        <div className="flex-1 min-w-0">{children}</div>
+      <div className="mb-6">
+        <IntegrationsNav />
       </div>
+
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }
