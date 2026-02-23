@@ -35,6 +35,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (task.length > 2000) {
+      return NextResponse.json(
+        { error: 'Task description must be 2000 characters or less' },
+        { status: 400 }
+      );
+    }
+
     const { data: team } = await supabase
       .from('teams')
       .select('id')
@@ -55,6 +62,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Workflow not found' },
         { status: 404 }
+      );
+    }
+
+    // Prevent concurrent workflows (avoids token burn from rapid-fire submissions)
+    const { data: activeRun } = await supabase
+      .from('workflow_runs')
+      .select('id')
+      .eq('workflow_id', workflow.id)
+      .in('status', ['queued', 'running'])
+      .limit(1)
+      .maybeSingle();
+
+    if (activeRun) {
+      return NextResponse.json(
+        { error: 'A workflow is already running for this project. Wait for it to complete.' },
+        { status: 429 }
       );
     }
 

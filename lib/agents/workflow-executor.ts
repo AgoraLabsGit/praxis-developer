@@ -1,5 +1,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { executeAgent } from './execute-agent';
+import { createPullRequest } from '@/lib/github/create-pull-request';
+import {
+  parseCodeFiles,
+  extractPRTitle,
+  extractPRBody,
+} from '@/lib/utils/parse-code-files';
 
 interface WorkflowContext {
   runId: string;
@@ -82,6 +88,13 @@ export async function executeWorkflowAsync(
     ];
 
     let prevOutput = task;
+    let implementationOutput = '';
+    const prState = { url: null as string | null };
+
+    // Limit prompt size to avoid runaway token costs (~16K chars ≈ 4K tokens)
+    const MAX_PROMPT_CHARS = 16_000;
+    const truncate = (s: string) =>
+      s.length > MAX_PROMPT_CHARS ? s.substring(0, MAX_PROMPT_CHARS) + '\n\n[...truncated]' : s;
 
     for (const step of steps) {
       const agent = step.agent;
@@ -97,35 +110,158 @@ export async function executeWorkflowAsync(
       const startTime = Date.now();
       let output: string;
       try {
-        output = await executeAgent(supabase, agent.id, step.prompt(prevOutput), organizationId);
+        // Step 5: Use single sync prompt only (avoids double LLM call - was calling executeAgent twice)
+        if (step.num === 5) {
+          const syncPrompt = `Create a GitHub PR for this implementation.
+
+Task: ${task}
+Implementation: ${truncate(implementationOutput)}
+
+Your output should include:
+Title: [Clear, concise PR title]
+Description: [Detailed PR description]
+`;
+          output = await executeAgent(supabase, agent.id, syncPrompt, organizationId);
+        } else {
+          output = await executeAgent(supabase, agent.id, truncate(step.prompt(prevOutput)), organizationId);
+        }
       } catch (err) {
         output = `Error: ${err instanceof Error ? err.message : String(err)}`;
       }
       const durationSeconds = Math.round((Date.now() - startTime) / 1000);
 
-      await recordStepComplete(supabase, runId, projectId, step.num, agent, step.name, output, durationSeconds);
-      prevOutput = output;
+      if (step.num === 3) {
+        implementationOutput = output;
+      }
+
+      // Step 5 (Sync): Create real GitHub PR
+      if (step.num === 5) {
+        try {
+
+          const prTitle = extractPRTitle(output) || task;
+          const prBody =
+            extractPRBody(output) ||
+            `Implementation for: ${task}\n\n${implementationOutput.substring(0, 500)}`;
+
+          const files = parseCodeFiles(implementationOutput);
+
+          if (files.length === 0) {
+            throw new Error(
+              'No code files found in implementation. Builder Agent must output code in format: ## path/to/file.ts\\n```typescript\\ncode\\n```'
+            );
+          }
+
+          prState.url = await createPullRequest({
+            organizationId,
+            projectId,
+            title: prTitle,
+            body: prBody,
+            files,
+          });
+
+          await recordStepComplete(
+            supabase,
+            runId,
+            projectId,
+            step.num,
+            agent,
+            step.name,
+            `${output}\n\nPR: ${prState.url}`,
+            Math.round((Date.now() - startTime) / 1000)
+          );
+
+          await supabase.from('chat_messages').insert({
+            project_id: projectId,
+            user_id: userId,
+            workflow_run_id: runId,
+            sender_type: 'agent',
+            sender_name: agent.name,
+            content: `✅ Created pull request: ${prState.url}`,
+            metadata: { step_number: step.num, agent_id: agent.id, pr_url: prState.url },
+          });
+        } catch (syncErr) {
+          console.error('Sync agent error:', syncErr);
+          const errorMessage =
+            syncErr instanceof Error ? syncErr.message : String(syncErr);
+          output = `Error: ${errorMessage}`;
+
+          await recordStepComplete(
+            supabase,
+            runId,
+            projectId,
+            step.num,
+            agent,
+            step.name,
+            output,
+            Math.round((Date.now() - startTime) / 1000)
+          );
+
+          await supabase.from('chat_messages').insert({
+            project_id: projectId,
+            user_id: userId,
+            workflow_run_id: runId,
+            sender_type: 'agent',
+            sender_name: agent.name,
+            content: `❌ Sync failed: ${errorMessage}`,
+            metadata: { step_number: step.num, agent_id: agent.id },
+          });
+        }
+
+        prevOutput = output;
+
+        await supabase.from('chat_messages').insert({
+          project_id: projectId,
+          user_id: userId,
+          workflow_run_id: runId,
+          sender_type: 'system',
+          content: prState.url
+            ? `✅ Workflow completed!\n\nPull request: ${prState.url}`
+            : `✅ Workflow completed with sync error. Check Sync step for details.`,
+          metadata: { workflow_run_id: runId, pr_url: prState.url },
+        });
+      } else {
+        await recordStepComplete(
+          supabase,
+          runId,
+          projectId,
+          step.num,
+          agent,
+          step.name,
+          output,
+          durationSeconds
+        );
+        prevOutput = output;
+      }
     }
 
-    const prUrl = `https://github.com/example/repo/pull/1`;
+    // Update workflow run status and insert completion message if step 5 didn't
+    const { data: lastStep } = await supabase
+      .from('workflow_steps')
+      .select('step_number')
+      .eq('workflow_run_id', runId)
+      .order('step_number', { ascending: false })
+      .limit(1)
+      .single();
 
     await supabase
       .from('workflow_runs')
       .update({
         status: 'completed',
         completed_at: new Date().toISOString(),
-        pr_url: prUrl,
+        pr_url: prState.url,
       })
       .eq('id', runId);
 
-    await supabase.from('chat_messages').insert({
-      project_id: projectId,
-      user_id: userId,
-      workflow_run_id: runId,
-      sender_type: 'system',
-      content: `✅ Workflow completed!\n\nPull request: ${prUrl}`,
-      metadata: { workflow_run_id: runId, pr_url: prUrl },
-    });
+    if (lastStep?.step_number !== 5) {
+      await supabase.from('chat_messages').insert({
+        project_id: projectId,
+        user_id: userId,
+        workflow_run_id: runId,
+        sender_type: 'system',
+        content: `✅ Workflow completed!`,
+        metadata: { workflow_run_id: runId },
+      });
+    }
 
     await supabase.from('tasks').insert({
       project_id: projectId,
@@ -148,7 +284,7 @@ export async function executeWorkflowAsync(
         project_id: projectId,
         event_type: 'workflow_completed',
         description: `Workflow completed: ${task}`,
-        metadata: { workflow_run_id: runId, pr_url: prUrl },
+        metadata: { workflow_run_id: runId, pr_url: prState.url ?? undefined },
       });
     }
   } catch (error) {
