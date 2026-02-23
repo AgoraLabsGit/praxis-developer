@@ -1,12 +1,14 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { getApiKey } from '@/lib/utils/get-api-key';
 
 const GITHUB_AUTH_URL = 'https://github.com/login/oauth/authorize';
 const SCOPES = ['repo', 'read:user', 'user:email'].join(' ');
 
 export async function GET() {
-  const clientId = process.env.GITHUB_CLIENT_ID;
+  const clientId =
+    (await getApiKey('GITHUB_CLIENT_ID')) || process.env.GITHUB_CLIENT_ID;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   if (!clientId) {

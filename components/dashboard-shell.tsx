@@ -477,6 +477,7 @@ function getCurrentBreadcrumb(pathname: string, projects: Project[]) {
     let page = 'Code & Repos';
     if (pathname.includes('/ai-providers')) page = 'AI Providers';
     if (pathname.includes('/infrastructure')) page = 'Infrastructure';
+    if (pathname.includes('/keys')) page = 'API Keys';
     return (
       <>
         <ChevronRight className="w-4 h-4" />

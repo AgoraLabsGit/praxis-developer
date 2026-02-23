@@ -1,14 +1,17 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { getApiKeys } from '@/lib/utils/get-api-key';
 
 const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
 const GITHUB_USER_URL = 'https://api.github.com/user';
 
 export async function GET(request: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const clientId = process.env.GITHUB_CLIENT_ID;
-  const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+  const keys = await getApiKeys(['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET']);
+  const clientId = keys.GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID;
+  const clientSecret =
+    keys.GITHUB_CLIENT_SECRET || process.env.GITHUB_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(

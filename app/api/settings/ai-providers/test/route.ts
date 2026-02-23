@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { getApiKey } from '@/lib/utils/get-api-key';
 
 const PROVIDER_ENDPOINTS: Record<string, string> = {
   openrouter: 'https://openrouter.ai/api/v1/models',
@@ -10,15 +11,18 @@ const PROVIDER_ENDPOINTS: Record<string, string> = {
   perplexity: 'https://api.perplexity.ai/chat/completions',
 };
 
+const PROVIDER_KEY_NAMES: Record<string, string> = {
+  openrouter: 'OPENROUTER_API_KEY',
+  openai: 'OPENAI_API_KEY',
+  anthropic: 'ANTHROPIC_API_KEY',
+  google: 'GOOGLE_AI_API_KEY',
+  perplexity: 'PERPLEXITY_API_KEY',
+};
+
 function getAuthHeader(name: string, config: Record<string, unknown>): string {
   const key = config.api_key as string | undefined;
   if (!key) return '';
-
-  if (name === 'openrouter') return `Bearer ${key}`;
-  if (name === 'openai') return `Bearer ${key}`;
-  if (name === 'anthropic') return `Bearer ${key}`;
-  if (name === 'google') return `Bearer ${key}`;
-  if (name === 'perplexity') return `Bearer ${key}`;
+  if (name === 'google') return key;
   return `Bearer ${key}`;
 }
 
@@ -43,21 +47,36 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { name, config } = body;
+  const { name, config = {} } = body;
 
-  if (!name || !config?.api_key) {
+  if (!name) {
     return NextResponse.json(
-      { error: 'name and config.api_key required' },
+      { error: 'name required' },
       { status: 400 }
     );
   }
 
+  let apiKey = (config.api_key as string)?.trim();
+  if (!apiKey) {
+    const keyName = PROVIDER_KEY_NAMES[name];
+    if (keyName) {
+      apiKey = (await getApiKey(keyName)) || process.env[keyName] || '';
+    }
+  }
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: 'API key required. Add it in the form or in the Keys tab.' },
+      { status: 400 }
+    );
+  }
+
+  const testConfig = { ...config, api_key: apiKey };
   const url = PROVIDER_ENDPOINTS[name] || (config.base_url as string);
   if (!url) {
     return NextResponse.json({ error: 'Unknown provider' }, { status: 400 });
   }
 
-  const auth = getAuthHeader(name, config);
+  const auth = getAuthHeader(name, testConfig);
 
   try {
     if (name === 'openrouter') {
@@ -98,7 +117,7 @@ export async function POST(req: NextRequest) {
       });
     }
     if (name === 'google') {
-      const key = config.api_key as string;
+      const key = testConfig.api_key as string;
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`
       );

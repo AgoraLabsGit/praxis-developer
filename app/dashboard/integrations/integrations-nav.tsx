@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Github, Bot, Server } from 'lucide-react';
+import { Github, Bot, Server, Key } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const TABS = [
   { href: '/dashboard/integrations/code', label: 'Code & Repos', icon: Github },
   { href: '/dashboard/integrations/ai-providers', label: 'AI Providers', icon: Bot },
   { href: '/dashboard/integrations/infrastructure', label: 'Infrastructure', icon: Server },
+  { href: '/dashboard/integrations/keys', label: 'API Keys', icon: Key },
 ];
 
 export function IntegrationsNav() {
