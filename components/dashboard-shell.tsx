@@ -34,7 +34,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { ChatSidebar } from '@/components/chat-sidebar';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
